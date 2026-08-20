@@ -14,7 +14,7 @@ const Pedido = () => {
     //Estados para gerenciar a lista dos items 
     const[items,setItems]=useState(cardapio);
     const[status,setStatus]=useState("");
-    const[enviar,setenviar]=useState(false);
+    const[enviar,setEnviar]=useState(false);
     
     //Valor fixo adicionado ao total quando tiver itemn no carrinho 
     const taxaEntrega=5.00;
@@ -32,6 +32,28 @@ const Pedido = () => {
                 item.id === id ? { ...item, quantidade: Math.max(0, item.quantidade + valor) } :item
             )
         )
+    }
+
+    //FILTER - Selecione apenas os produtos disponiveis e do carrinho 
+    const produtosDisponiveis = items.filter(item=> item.disponivel);
+    const carrinho = items.filter(item=>item.quantidade>0);
+
+    //REDUCE - Calcula a soma dos items (preco* quantidade) e adiciona a taxa de Entrega
+    const subtotal=carrinho.reduce((ac,item) => ac + item.preco * item.quantidade,0)
+    const total = subtotal >0 ? subtotal + taxaEntrega:0;
+
+    //SIMULAÇÃO DO CICLO DE VIDA DA ENTREGA USANDO OS TEMPORIZADORES ASSINCRONOS
+    const confimacaoPedido=()=> {
+        setEnviar(true);
+        setStatus("Restaurante preparando seu pedido...");
+        setTimeout(()=> {
+            setStatus("Seu pedido sai para entrega")
+            setEnviar(false)
+        },5000);
+        setTimeout(() => {
+            setStatus("Seu pedido foi entregue com sucesso")
+            setEnviar(false)
+        }, 10000)
     }
 
   return (
